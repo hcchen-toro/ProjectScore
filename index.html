@@ -233,40 +233,40 @@
 <script>
     // 資料來源：根據最新純文字檔與圖片分數建立
     const rawData = [
-        {id:1, teacher:"苗新元老師", topic:"療癒型機器人", score:87, members:[
+        {id:1, teacher:"苗新元老師", topic:"療癒型機器人", score:92, members:[
             {c:"電機三A", id:"s11360122", name:"陳雯瑾"}, {c:"電機三A", id:"s11360127", name:"陳羿誠"}, {c:"電機三A", id:"s11360141", name:"莊舒融"}, {c:"電機三A", id:"s11360239", name:"徐瑛蔚"}
         ]},
         {id:2, teacher:"苗新元老師", topic:"浴室清潔機器人", score:84, members:[
             {c:"電機三A", id:"s11360146", name:"李郁達"}, {c:"電機三B", id:"s11360229", name:"許柏崴"}, {c:"電機三B", id:"s11360241", name:"李洧辰"}, {c:"電機三B", id:"s11360249", name:"高毓均"}
         ]},
-        {id:3, teacher:"苗新元老師", topic:"基於近紅外影像的AI 驅動的烘焙過程無創檢測方法", score:93, members:[
+        {id:3, teacher:"苗新元老師", topic:"基於近紅外影像的AI 驅動的烘焙過程無創檢測方法", score:98, members:[
             {c:"電機四B", id:"s09360244", name:"林宸宇"}, {c:"資工三C", id:"s11350329", name:"林家緯"}, {c:"電機三A", id:"s11360111", name:"何東叡"}
         ]},
         {id:4, teacher:"鐘玉芳老師", topic:"應用機器學習輔助糖尿病風險識別之研究", score:81, members:[
             {c:"電機三A", id:"s11360130", name:"邱祥恩"}, {c:"電機三B", id:"s11360244", name:"張珽皓"}, {c:"電機三A", id:"s11360159", name:"楊竣安"}, {c:"電機三A", id:"s11360162", name:"林冠宇"}
         ]},
-        {id:5, teacher:"蔡坤霖老師", topic:"基於RISC-V的影像處理ALU核心改良", score:88, members:[
+        {id:5, teacher:"蔡坤霖老師", topic:"基於RISC-V的影像處理ALU核心改良", score:93, members:[
             {c:"電機三A", id:"s11360125", name:"梁偉宗"}, {c:"電機三A", id:"s11360102", name:"吳羽安"}, {c:"電機三A", id:"s11360115", name:"陳禹瑄"}
         ]},
         {id:6, teacher:"蔡坤霖老師", topic:"智慧農場之研究以番茄病蟲害為例", score:84, members:[
             {c:"電機三A", id:"s11360131", name:"林冠傑"}, {c:"電機三A", id:"s11360129", name:"陳佳安"}, {c:"電機三A", id:"s11360144", name:"游堯堃"}, {c:"電機三A", id:"s11360145", name:"黃與桐"}
         ]},
-        {id:7, teacher:"劉日新老師", topic:"以氧化鋅奈米管強化碳材半導體之光電效應", score:87, members:[
+        {id:7, teacher:"劉日新老師", topic:"以氧化鋅奈米管強化碳材半導體之光電效應", score:92, members:[
             {c:"電機三A", id:"s11360108", name:"曾柏堯"}, {c:"電機三A", id:"s11360116", name:"金桓熠"}, {c:"電機三A", id:"s11360132", name:"林昀臻"}, {c:"電機三A", id:"s11360119", name:"范致隆"}
         ]},
         {id:8, teacher:"劉日新老師", topic:"以氧化鎵強化碳材半導體之光電效應", score:85, members:[
             {c:"電機三A", id:"s11360109", name:"黃俊豪"}, {c:"電機三B", id:"s11360202", name:"胡俊宇"}, {c:"電機三B", id:"s11360218", name:"鄭博懌"}, {c:"電機三B", id:"s11360250", name:"邱詮富"}
         ]},
-        {id:9, teacher:"劉日新老師", topic:"以矽奈米管強化碳材半導體之光電效應", score:86, members:[
+        {id:9, teacher:"劉日新老師", topic:"以矽奈米管強化碳材半導體之光電效應", score:91, members:[
             {c:"電機三A", id:"s11360121", name:"馬梃家"}, {c:"電機三A", id:"s11360136", name:"劉睿承"}, {c:"電機三A", id:"s11360106", name:"王赫辰"}, {c:"電機三A", id:"s11360161", name:"林奉諭"}
         ]},
-        {id:10, teacher:"劉日新老師", topic:"以碳材半導體實現軟質鈣鈦礦太陽能電池", score:86, members:[
+        {id:10, teacher:"劉日新老師", topic:"以碳材半導體實現軟質鈣鈦礦太陽能電池", score:91, members:[
             {c:"電機三B", id:"s11360216", name:"陳竣詳"}, {c:"電機三B", id:"s11360201", name:"洪翊宸"}, {c:"電機三B", id:"s11360214", name:"岳禹成"}, {c:"電機三B", id:"s11360242", name:"林柏志"}
         ]},
-        {id:11, teacher:"劉日新老師", topic:"以氮化鎵強化碳材半導體之光電特性", score:86, members:[
+        {id:11, teacher:"劉日新老師", topic:"以氮化鎵強化碳材半導體之光電特性", score:91, members:[
             {c:"電機三B", id:"s11360220", name:"游承翰"}, {c:"電機三A", id:"s11360147", name:"謝鎧駿"}, {c:"電機三B", id:"s11360236", name:"朱鎮宇"}, {c:"電機三B", id:"s11360224", name:"鄧國奕"}
         ]},
-        {id:12, teacher:"陳綺楓老師", topic:"用於低軌衛星之帶通濾波器研發", score:91, members:[
+        {id:12, teacher:"陳綺楓老師", topic:"用於低軌衛星之帶通濾波器研發", score:96, members:[
             {c:"電機三A", id:"s11360101", name:"蔡瑋豪"}, {c:"電機三A", id:"s11360104", name:"袁裕順"}, {c:"電機三A", id:"s11360143", name:"吳昆瑋"}, {c:"電機三B", id:"s11360205", name:"吳明澤"}
         ]},
         {id:13, teacher:"陳綺楓老師", topic:"用於 5G 通訊系統之反射式負載相移器的研究與設計", score:84, members:[
@@ -326,7 +326,7 @@
         {id:31, teacher:"許銘全老師", topic:"具視覺觸發補捉反應之仿螳螂機器系統設計與實作", score:81, members:[
             {c:"電機三B", id:"s11360245", name:"陳炫豪"}, {c:"電機三B", id:"s11360233", name:"陳韋凱"}
         ]},
-        {id:32, teacher:"陳綺楓老師", topic:"基於FPGA之多通道麥克風聲源定位系統", score:89, members:[
+        {id:32, teacher:"陳綺楓老師", topic:"基於FPGA之多通道麥克風聲源定位系統", score:94, members:[
             {c:"電機三B", id:"s11360234", name:"王柏為"}, {c:"電機三A", id:"s11360105", name:"洪琮暉"}, {c:"電機三B", id:"s11360248", name:"白芸綺"}, {c:"電機三B", id:"s11360247", name:"郭鎮愷"}
         ]}
     ];
@@ -500,4 +500,5 @@
 </script>
 
 </body>
+
 </html>
