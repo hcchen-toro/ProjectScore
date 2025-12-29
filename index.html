@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專題成績個人貢獻度調整系統 (Excel版)</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            background-color: #f4f4f9;
+            margin: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            border-top: 5px solid #2c3e50;
+        }
+        /* 阿諛奉承區塊開始 */
+        .controls {
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(to bottom, #ffffff, #f7fbff);
+            border: 1px solid #cce0ff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .honorific-label {
+            display: block;
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .honorific-sub {
+            font-size: 0.9em;
+            color: #555;
+            font-weight: normal;
+        }
+        select {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            border: 2px solid #bdc3c7;
+            width: 300px;
+            background-color: #fff;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+        select:hover {
+            border-color: #3498db;
+        }
+        .welcome-banner {
+            background-color: #fff8e1; /* 淡金色背景 */
+            border-left: 5px solid #f1c40f; /* 金色邊框 */
+            color: #856404;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 1.05em;
+            display: none; /* 預設隱藏 */
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 阿諛奉承區塊結束 */
+
+        .group-card {
+            border: 1px solid #e0e0e0;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            transition: transform 0.2s;
+        }
+        .group-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .group-header {
+            background-color: #34495e;
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .group-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+        .group-score {
+            background-color: #e74c3c;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input[type="number"]:focus {
+            border-color: #3498db;
+            outline: none;
+            background-color: #f0f8ff;
+        }
+        .calculated-score {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 1.2em;
+        }
+        .btn-export {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, #219150, #27ae60);
+        }
+        .hidden {
+            display: none;
+        }
+        
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .group-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .group-score {
+                margin-top: 8px;
+            }
+            select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>專題組員成績權重調整系統</h1>
+    <p class="subtitle">Personal Contribution Adjustment System</p>
+    
+    <div class="controls">
+        <label for="teacherSelect" class="honorific-label">
+            致 尊敬的教授鈞鑒：<br>
+            <span class="honorific-sub">感謝您本學期對學生的悉心指導與付出，懇請點選您的尊稱以開始評分：</span>
+        </label>
+        <select id="teacherSelect" onchange="renderGroups()">
+            <option value="">-- 敬請點選您的尊姓大名 --</option>
+        </select>
+    </div>
+
+    <div id="welcomeBanner" class="welcome-banner"></div>
+
+    <div id="groupsContainer">
+        <p style="text-align: center; color: #999; margin-top: 30px; font-style: italic;">
+            (等待教授選擇中...)
+        </p>
+    </div>
+
+    <button class="btn-export hidden" id="exportBtn" onclick="exportXLSX()">
+        💾 儲存並匯出 Excel 報表 (.xlsx)
+    </button>
+</div>
+
+<script>
+    // 資料來源：根據最新純文字檔與圖片分數建立
+    const rawData = [
+        {id:1, teacher:"苗新元老師", topic:"療癒型機器人", score:87, members:[
+            {c:"電機三A", id:"s11360122", name:"陳雯瑾"}, {c:"電機三A", id:"s11360127", name:"陳羿誠"}, {c:"電機三A", id:"s11360141", name:"莊舒融"}, {c:"電機三A", id:"s11360239", name:"徐瑛蔚"}
+        ]},
+        {id:2, teacher:"苗新元老師", topic:"浴室清潔機器人", score:84, members:[
+            {c:"電機三A", id:"s11360146", name:"李郁達"}, {c:"電機三B", id:"s11360229", name:"許柏崴"}, {c:"電機三B", id:"s11360241", name:"李洧辰"}, {c:"電機三B", id:"s11360249", name:"高毓均"}
+        ]},
+        {id:3, teacher:"苗新元老師", topic:"基於近紅外影像的AI 驅動的烘焙過程無創檢測方法", score:93, members:[
+            {c:"電機四B", id:"s09360244", name:"林宸宇"}, {c:"資工三C", id:"s11350329", name:"林家緯"}, {c:"電機三A", id:"s11360111", name:"何東叡"}
+        ]},
+        {id:4, teacher:"鐘玉芳老師", topic:"應用機器學習輔助糖尿病風險識別之研究", score:81, members:[
+            {c:"電機三A", id:"s11360130", name:"邱祥恩"}, {c:"電機三B", id:"s11360244", name:"張珽皓"}, {c:"電機三A", id:"s11360159", name:"楊竣安"}, {c:"電機三A", id:"s11360162", name:"林冠宇"}
+        ]},
+        {id:5, teacher:"蔡坤霖老師", topic:"基於RISC-V的影像處理ALU核心改良", score:88, members:[
+            {c:"電機三A", id:"s11360125", name:"梁偉宗"}, {c:"電機三A", id:"s11360102", name:"吳羽安"}, {c:"電機三A", id:"s11360115", name:"陳禹瑄"}
+        ]},
+        {id:6, teacher:"蔡坤霖老師", topic:"智慧農場之研究以番茄病蟲害為例", score:84, members:[
+            {c:"電機三A", id:"s11360131", name:"林冠傑"}, {c:"電機三A", id:"s11360129", name:"陳佳安"}, {c:"電機三A", id:"s11360144", name:"游堯堃"}, {c:"電機三A", id:"s11360145", name:"黃與桐"}
+        ]},
+        {id:7, teacher:"劉日新老師", topic:"以氧化鋅奈米管強化碳材半導體之光電效應", score:87, members:[
+            {c:"電機三A", id:"s11360108", name:"曾柏堯"}, {c:"電機三A", id:"s11360116", name:"金桓熠"}, {c:"電機三A", id:"s11360132", name:"林昀臻"}, {c:"電機三A", id:"s11360119", name:"范致隆"}
+        ]},
+        {id:8, teacher:"劉日新老師", topic:"以氧化鎵強化碳材半導體之光電效應", score:85, members:[
+            {c:"電機三A", id:"s11360109", name:"黃俊豪"}, {c:"電機三B", id:"s11360202", name:"胡俊宇"}, {c:"電機三B", id:"s11360218", name:"鄭博懌"}, {c:"電機三B", id:"s11360250", name:"邱詮富"}
+        ]},
+        {id:9, teacher:"劉日新老師", topic:"以矽奈米管強化碳材半導體之光電效應", score:86, members:[
+            {c:"電機三A", id:"s11360121", name:"馬梃家"}, {c:"電機三A", id:"s11360136", name:"劉睿承"}, {c:"電機三A", id:"s11360106", name:"王赫辰"}, {c:"電機三A", id:"s11360161", name:"林奉諭"}
+        ]},
+        {id:10, teacher:"劉日新老師", topic:"以碳材半導體實現軟質鈣鈦礦太陽能電池", score:86, members:[
+            {c:"電機三B", id:"s11360216", name:"陳竣詳"}, {c:"電機三B", id:"s11360201", name:"洪翊宸"}, {c:"電機三B", id:"s11360214", name:"岳禹成"}, {c:"電機三B", id:"s11360242", name:"林柏志"}
+        ]},
+        {id:11, teacher:"劉日新老師", topic:"以氮化鎵強化碳材半導體之光電特性", score:86, members:[
+            {c:"電機三B", id:"s11360220", name:"游承翰"}, {c:"電機三A", id:"s11360147", name:"謝鎧駿"}, {c:"電機三B", id:"s11360236", name:"朱鎮宇"}, {c:"電機三B", id:"s11360224", name:"鄧國奕"}
+        ]},
+        {id:12, teacher:"陳綺楓老師", topic:"用於低軌衛星之帶通濾波器研發", score:91, members:[
+            {c:"電機三A", id:"s11360101", name:"蔡瑋豪"}, {c:"電機三A", id:"s11360104", name:"袁裕順"}, {c:"電機三A", id:"s11360143", name:"吳昆瑋"}, {c:"電機三B", id:"s11360205", name:"吳明澤"}
+        ]},
+        {id:13, teacher:"陳綺楓老師", topic:"用於 5G 通訊系統之反射式負載相移器的研究與設計", score:84, members:[
+            {c:"電機三B", id:"s11360203", name:"林庭薇"}, {c:"電機三B", id:"s11360219", name:"鄭炘朋"}, {c:"電機四A", id:"s10360148", name:"蔡書弘"}
+        ]},
+        {id:14, teacher:"許銘全老師", topic:"LDO穩壓器設計與負載調變模擬", score:81, members:[
+            {c:"電機三B", id:"s11360231", name:"李盛華"}, {c:"電機三A", id:"s11360110", name:"楊彥康"}, {c:"電機三A", id:"s11360113", name:"林侑璇"}, {c:"電機三A", id:"S11360138", name:"黃琣芯"}
+        ]},
+        {id:15, teacher:"陳綺楓老師", topic:"環形震盪器", score:82, members:[
+            {c:"電機四B", id:"s10340110", name:"李韋鋐"}, {c:"電機三A", id:"s11360118", name:"林岳翰"}
+        ]},
+        {id:16, teacher:"陳綺楓老師", topic:"使用Ltspice模擬二級放大器之小信號性能與旁路元件效應", score:81, members:[
+            {c:"電機三B", id:"s11360204", name:"賴彥廷"}, {c:"電機三B", id:"s11360221", name:"程懷萱"}
+        ]},
+        {id:17, teacher:"許銘全老師", topic:"抗溫度變異之運算放⼤器", score:84, members:[
+            {c:"電機三A", id:"s11490012", name:"蔡定倫"}, {c:"電機三B", id:"s11340201", name:"劉毅文"}
+        ]},
+        {id:18, teacher:"陳昱仁老師", topic:"基於SLAM掃描功能之⾃動規劃路徑⾃⾛⾞", score:81, members:[
+            {c:"電機四A", id:"s10360125", name:"葉秉桓"}, {c:"電機四B", id:"s10360237", name:"林則言"}
+        ]},
+        {id:19, teacher:"陳昱仁老師", topic:"平⾯可延伸機械⼿臂結合深度學習之應⽤", score:83, members:[
+            {c:"電機三A", id:"s11360123", name:"林冠漢"}, {c:"電機三B", id:"s11360228", name:"巫紹齊"}, {c:"電機三B", id:"S10310139", name:"林家凱"}, {c:"電機三A", id:"s11360150", name:"陳彥均"}
+        ]},
+        {id:20, teacher:"田青禾老師", topic:"無鉛鈣鈦礦晶體成⻑之研究", score:82, members:[
+            {c:"電機四B", id:"s10360215", name:"廖柏凱"}, {c:"電機四A", id:"s10360144", name:"巫旻哲"}, {c:"電機三A", id:"s11360107", name:"劉洸宇"}, {c:"電機三B", id:"s11360252", name:"董冠呈"}, {c:"電機四B", id:"s09360243", name:"蘇靖豪"}
+        ]},
+        {id:21, teacher:"田青禾老師", topic:"表面聲波感測器", score:80, members:[
+            {c:"電機三A", id:"s11360112", name:"吳御岑"}, {c:"電機三A", id:"s11360142", name:"洪普修"}, {c:"電機三A", id:"s11360149", name:"陳嘉翔"}, {c:"電機三B", id:"s11360238", name:"何東霖"}
+        ]},
+        {id:22, teacher:"田青禾老師", topic:"氧化鎵薄膜金屬摻雜之 Arduino 葡萄糖感測器研究與製作", score:85, members:[
+            {c:"電機三A", id:"s11360117", name:"顏丞祥"}, {c:"電機三A", id:"s11360133", name:"吳嘉宸"}, {c:"電機三B", id:"s11360217", name:"常晉瑋"}, {c:"電機三B", id:"s11360210", name:"徐晧庭"}
+        ]},
+        {id:23, teacher:"田青禾老師", topic:"具動態補流功能之太陽能追光與儲能整合系統開發", score:81, members:[
+            {c:"電機三A", id:"s11360134", name:"李巧筠"}, {c:"電機三A", id:"s11360137", name:"林岳鋒"}, {c:"電機三B", id:"s11360223", name:"黃鴻諭"}
+        ]},
+        {id:24, teacher:"田青禾老師", topic:"數位微流體感測器", score:80, members:[
+            {c:"電機三B", id:"s11360207", name:"賴弈杉"}, {c:"電機三B", id:"s11360208", name:"李沛儒"}, {c:"電機三B", id:"s11360222", name:"黃群祐"}, {c:"電機三B", id:"s11360246", name:"陳鼎勛"}
+        ]},
+        {id:25, teacher:"田青禾老師", topic:"雙板微流道晶⽚", score:80, members:[
+            {c:"電機三B", id:"s11360227", name:"黃建騰"}, {c:"電機三A", id:"s11360124", name:"施經佑"}, {c:"電機三B", id:"s11360206", name:"鄭宸侑"}, {c:"電機三B", id:"s11360253", name:"蘇煜凱"}
+        ]},
+        {id:26, teacher:"田青禾老師", topic:"利⽤空間限制逆溫結晶法成⻑無鉛鈣鈦礦晶體之研究", score:78, members:[
+            {c:"電機三B", id:"s11360243", name:"黃敬捷"}, {c:"電機三A", id:"s11360126", name:"鄭安鈞"}, {c:"電機三A", id:"s11360148", name:"黃信豪"}, {c:"電機三B", id:"s11360215", name:"王振詮"}
+        ]},
+        {id:27, teacher:"田青禾老師", topic:"單板電控晶⽚", score:78, members:[
+            {c:"電機三B", id:"s11360261", name:"吳聲杬"}, {c:"電機三B", id:"s11360265", name:"顏呈諭"}, {c:"電機三A", id:"s11360156", name:"蕭丞妤"}, {c:"電機三B", id:"s11360257", name:"佘明諺"}
+        ]},
+        {id:28, teacher:"許銘全老師", topic:"基於影像辨識之⾃⾛⾞避障研究", score:80, members:[
+            {c:"電機三A", id:"s11360103", name:"白承嶧"}, {c:"電機三B", id:"s11360235", name:"張有鎮"}
+        ]},
+        {id:29, teacher:"許銘全老師", topic:"群組機器⼈隊形變換之演算法分析", score:80, members:[
+            {c:"電機三B", id:"s11360209", name:"劉芸安"}, {c:"電機三A", id:"s11360120", name:"蔡宇晴"}
+        ]},
+        {id:30, teacher:"許銘全老師", topic:"⾃主移動平台結合機械⼿臂之環境資源探測⾞設計", score:84, members:[
+            {c:"電機三B", id:"s11360237", name:"藍軒翰"}, {c:"電機三B", id:"s11360244", name:"廖昱閎"}, {c:"電機三B", id:"s11360232", name:"魏宏宇"}, {c:"電機三A", id:"s11360114", name:"吳豎蓉"}, {c:"電機三A", id:"s11360140", name:"李洋賢"}
+        ]},
+        {id:31, teacher:"許銘全老師", topic:"具視覺觸發補捉反應之仿螳螂機器系統設計與實作", score:81, members:[
+            {c:"電機三B", id:"s11360245", name:"陳炫豪"}, {c:"電機三B", id:"s11360233", name:"陳韋凱"}
+        ]},
+        {id:32, teacher:"陳綺楓老師", topic:"基於FPGA之多通道麥克風聲源定位系統", score:89, members:[
+            {c:"電機三B", id:"s11360234", name:"王柏為"}, {c:"電機三A", id:"s11360105", name:"洪琮暉"}, {c:"電機三B", id:"s11360248", name:"白芸綺"}, {c:"電機三B", id:"s11360247", name:"郭鎮愷"}
+        ]}
+    ];
+
+    // 初始化頁面
+    window.onload = function() {
+        const teacherSelect = document.getElementById('teacherSelect');
+        const teachers = [...new Set(rawData.map(item => item.teacher))]; // 提取唯一老師名單
+        
+        teachers.forEach(t => {
+            const option = document.createElement('option');
+            option.value = t;
+            option.textContent = t;
+            teacherSelect.appendChild(option);
+        });
+    };
+
+    // 渲染組別卡片
+    function renderGroups() {
+        const teacher = document.getElementById('teacherSelect').value;
+        const container = document.getElementById('groupsContainer');
+        const exportBtn = document.getElementById('exportBtn');
+        const welcomeBanner = document.getElementById('welcomeBanner');
+        
+        container.innerHTML = '';
+
+        if (!teacher) {
+            container.innerHTML = '<p style="text-align: center; color: #999; margin-top: 30px; font-style: italic;">(等待教授選擇中...)</p>';
+            exportBtn.classList.add('hidden');
+            welcomeBanner.style.display = 'none';
+            return;
+        }
+
+        // 顯示歡迎橫幅，並加入阿諛奉承的文字
+        welcomeBanner.textContent = `✨ ${teacher} 您好，辛苦了！感謝您對學生的悉心指導。以下是您指導的專題組別：`;
+        welcomeBanner.style.display = 'block';
+
+        exportBtn.classList.remove('hidden');
+        
+        // 篩選該老師的組別
+        const groups = rawData.filter(g => g.teacher === teacher);
+
+        groups.forEach((group) => {
+            const card = document.createElement('div');
+            card.className = 'group-card';
+            
+            let html = `
+                <div class="group-header">
+                    <span class="group-title">題目：${group.topic}</span>
+                    <span class="group-score">組別成績：${group.score}</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">班級</th>
+                            <th style="width: 20%">學號</th>
+                            <th style="width: 20%">姓名</th>
+                            <th style="width: 20%">貢獻度 (%)</th>
+                            <th style="width: 25%">實得成績</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            group.members.forEach((member, memIndex) => {
+                const inputId = `score_${group.id}_${memIndex}`;
+                html += `
+                    <tr>
+                        <td>${member.c}</td>
+                        <td>${member.id}</td>
+                        <td>${member.name}</td>
+                        <td>
+                            <input type="number" id="${inputId}" value="100" min="0" max="100" 
+                                oninput="calculateScore(${group.id}, ${memIndex}, ${group.score})">
+                        </td>
+                        <td>
+                            <span id="final_${group.id}_${memIndex}" class="calculated-score">${group.score}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            card.innerHTML = html;
+            container.appendChild(card);
+        });
+    }
+
+    // 計算分數邏輯
+    function calculateScore(groupId, memIndex, baseScore) {
+        const input = document.getElementById(`score_${groupId}_${memIndex}`);
+        const output = document.getElementById(`final_${groupId}_${memIndex}`);
+        
+        let percent = parseFloat(input.value);
+        if (percent > 100) {
+            percent = 100;
+            input.value = 100;
+        } else if (percent < 0) {
+            percent = 0;
+            input.value = 0;
+        } else if (isNaN(percent)) {
+            percent = 0;
+        }
+
+        // 計算邏輯：組成績 * 百分比 (四捨五入至小數點後1位)
+        const finalScore = (baseScore * (percent / 100)).toFixed(1);
+        output.textContent = finalScore.replace('.0', ''); // 如果是整數就去掉 .0
+    }
+
+    // 匯出 Excel (XLSX) 邏輯
+    function exportXLSX() {
+        const teacher = document.getElementById('teacherSelect').value;
+        if (!teacher) return;
+
+        // 準備要匯出的資料陣列
+        const data = [];
+        // 加入標題列
+        data.push(["指導老師", "題目", "組別成績", "班級", "學號", "姓名", "貢獻度(%)", "個人實得成績"]);
+
+        const groups = rawData.filter(g => g.teacher === teacher);
+
+        groups.forEach(group => {
+            group.members.forEach((member, memIndex) => {
+                const inputId = `score_${group.id}_${memIndex}`;
+                const inputElement = document.getElementById(inputId);
+                // 確保能讀取到目前畫面上的值，如果還沒渲染則預設100
+                const percent = inputElement ? inputElement.value : 100;
+                
+                const finalScore = (group.score * (percent / 100)).toFixed(1).replace('.0', '');
+
+                const row = [
+                    group.teacher,
+                    group.topic,
+                    group.score,
+                    member.c,
+                    member.id,
+                    member.name,
+                    percent, // 匯出時也保留百分比
+                    finalScore
+                ];
+                data.push(row);
+            });
+        });
+
+        // 建立 Workbook
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        
+        // 設定欄寬 (選填，讓Excel比較好看)
+        const wscols = [
+            {wch: 15}, // 老師
+            {wch: 40}, // 題目
+            {wch: 10}, // 組成
+            {wch: 15}, // 班級
+            {wch: 15}, // 學號
+            {wch: 12}, // 姓名
+            {wch: 12}, // 貢獻度
+            {wch: 12}  // 實得
+        ];
+        ws['!cols'] = wscols;
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "成績確認表");
+
+        // 下載檔案
+        XLSX.writeFile(wb, `${teacher}_專題成績確認表.xlsx`);
+    }
+</script>
+
+</body>
+</html>
